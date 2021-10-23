@@ -30,7 +30,8 @@ public class AlunoController {
     public Aluno acharPorId(@PathVariable Integer id){
         return repository
                 .findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "O aluno " + id + " não existe em nossa Aplicação!"));
     }
 
     @DeleteMapping("{id}")
@@ -42,7 +43,8 @@ public class AlunoController {
                     repository.delete(aluno);
                     return Void.TYPE;
                 })
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "O aluno " + id + " não existe em nossa aplicação!"));
     }
 
     @PutMapping("{id}")
@@ -61,6 +63,7 @@ public class AlunoController {
                     aluno.setUf(dadoAtualizado.getUf());
                     return repository.save(aluno);
                 })
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "O aluno " + id + " não existe em nossa aplicação!"));
     }
 }

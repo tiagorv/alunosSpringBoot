@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
 
 @Entity
@@ -15,10 +17,12 @@ public class Aluno {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    @NotEmpty(message = "O campo nome deve ser informado para o Aluno!")
     @Column(nullable = false, length = 100)
     private String nome;
 
     @Column
+    @Min(value = 15, message = "O Aluno deve ter idade mínima de 15 anos!")
     private Integer idade;
 
     @Column(name = "data_matricula")
