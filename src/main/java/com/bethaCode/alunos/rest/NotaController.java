@@ -60,4 +60,74 @@ public class NotaController{
         notaASalvar.setDisciplina(valorDaDisciplina);
         return notaRepository.save(notaASalvar);
     }
+
+    @GetMapping("{id}")
+    public Nota acharPorId(@PathVariable Integer id){
+        return notaRepository
+                .findById(id)
+                .orElseThrow(()-> new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "A nota " + id + " não existe em nosso app!"
+                ));
+    }
+
+    @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deletar(@PathVariable Integer id){
+        notaRepository
+                .findById(id)
+                .map(
+                        notaListada -> {
+                            notaRepository.delete(notaListada);
+                            return Void.TYPE;
+                        }
+                ).orElseThrow(()-> new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "A nota " + id + " não existe em nosso app"
+        ));
+    }
+
+    @PutMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void atualizar(@PathVariable Integer id, @RequestBody NotaDTO dto){
+
+        //Pegamos a data do DTO e convertemos em LocalDate
+        LocalDate dataDaNota = LocalDate.parse(
+                dto.getDataNota(),
+                DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        );
+
+        //Tira a (, virgula) da casa decimal e troca por (. ponto)
+        BigDecimal valorDaNota = bigDecimalConverter.converter(dto.getNota());
+
+        Integer idAluno = dto.getIdAluno();
+        Aluno alunoDoBanco = alunoRepository
+                                .findById(idAluno)
+                                .orElseThrow(()-> new ResponseStatusException(
+                                        HttpStatus.BAD_REQUEST,
+                                        "O Aluno " + idAluno + " não existe em nossa app."
+                                ));
+
+        Integer idDisciplina = dto.getIdDisciplina();
+        Disciplina discipNoBanco = disciplinaRepository
+                                        .findById(idDisciplina)
+                                        .orElseThrow(()-> new ResponseStatusException(
+                                                HttpStatus.BAD_REQUEST,
+                                                "A disciplina " + idDisciplina + " não existe em nossa app!"
+                                        ));
+
+        notaRepository
+             .findById(id)
+             .map(notaCadastrada -> {
+                 notaCadastrada.setNota(valorDaNota);
+                 notaCadastrada.setDataNota(dataDaNota);
+                 notaCadastrada.setAluno(alunoDoBanco);
+                 notaCadastrada.setDisciplina(discipNoBanco);
+                 return notaRepository.save(notaCadastrada);
+             }).orElseThrow(()-> new ResponseStatusException(
+                     HttpStatus.BAD_REQUEST,
+                     "A nota " + id + " não existe em nossa app!"
+        ));
+
+    }
 }
