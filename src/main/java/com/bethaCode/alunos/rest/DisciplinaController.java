@@ -1,5 +1,6 @@
 package com.bethaCode.alunos.rest;
 
+import com.bethaCode.alunos.model.entity.Aluno;
 import com.bethaCode.alunos.model.entity.Disciplina;
 import com.bethaCode.alunos.model.repository.DisciplinaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,9 +9,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/disciplinas")
+@CrossOrigin("http://localhost:4200")
 public class DisciplinaController {
 
     private final DisciplinaRepository repository;
@@ -26,6 +29,10 @@ public class DisciplinaController {
         return repository.save(disciplina);
     }
 
+    @GetMapping
+    public List<Disciplina> acharTodos(){
+        return repository.findAll();
+    }
 
     @GetMapping("{id}")
     public Disciplina acharPorId(@PathVariable Integer id){
