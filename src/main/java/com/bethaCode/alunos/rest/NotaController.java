@@ -16,10 +16,12 @@ import org.springframework.web.server.ResponseStatusException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/notas")
 @RequiredArgsConstructor
+@CrossOrigin("http://localhost:4200")
 public class NotaController{
 
     private final NotaRepository notaRepository;
@@ -60,6 +62,13 @@ public class NotaController{
         notaASalvar.setDisciplina(valorDaDisciplina);
         return notaRepository.save(notaASalvar);
     }
+
+    @GetMapping
+    public List<Nota> pesquisar(
+            @RequestParam(value = "nome", required = false, defaultValue = "") String nome){
+        return notaRepository.findByNomeAluno("%" + nome + "%");
+    }
+
 
     @GetMapping("{id}")
     public Nota acharPorId(@PathVariable Integer id){
